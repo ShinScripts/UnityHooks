@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -23,24 +25,26 @@ public class WebHook : MonoBehaviour
 
         public Hook AddEmbed(Embed embed)
         {
-            embeds[0] = embed;
+            embeds.Add(embed);
             return this;
         }
 
-        public async void SendHook(string webhook_url)
+        public async void Send(string webhook_url)
         {
-            if (content == null)
+            if (content == null && embeds.Count == 0)
             {
-                throw new Exception("Content cannot be null");
+                throw new Exception("Content and embeds cannot be null, you need to provide at least one of them");
+            }
+
+            if (embeds.Count > 10)
+            {
+                throw new Exception("You can only have up to 10 embeds per discords limits");
             }
 
             UnityWebRequest request = new(webhook_url, "POST");
 
-            JsonSeria
-            string json = JsonUtility.ToJson(this);
+            string json = ToJson();
             byte[] bytes = Encoding.UTF8.GetBytes(json);
-
-            Debug.Log(json);
 
             request.SetRequestHeader("Content-Type", "application/json");
             request.uploadHandler = new UploadHandlerRaw(bytes);
@@ -48,18 +52,20 @@ public class WebHook : MonoBehaviour
 
             await request.SendWebRequest();
 
-            print(request.result);
-            print(request.responseCode);
+            print($"Result: {request.result}, Response code: {request.responseCode}");
         }
 
         public string ToJson()
         {
-            return JsonUtility.ToJson(this);
+            return JsonConvert.SerializeObject(this, Formatting.None, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
         }
 
-        public string username = "Webhook";
+        public string username = null;
         public string content = null;
-        public Embed[] embeds = new Embed[10];
+        public List<Embed> embeds = new();
     }
 
     class Embed
@@ -69,8 +75,9 @@ public class WebHook : MonoBehaviour
         //     public string text;
         // }
 
-        // public string? title;
-        public string description;
+#nullable enable
+        public string? title = null;
+        public string? description = null;
         // public string url;
         // public Footer footer;
     }
@@ -78,13 +85,13 @@ public class WebHook : MonoBehaviour
     void Start()
     {
         Hook hook = new();
-        hook.SetContent("content");
-        hook.AddEmbed(new()
-        {
-            description = "description"
-        });
+        // hook.AddEmbed(new()
+        // {
+        //     title = "title",
+        //     description = "description"
+        // });
 
         Debug.Log(hook.ToJson());
-        // hook.SendHook(webhook_url);
+        hook.Send(webhook_url);
     }
 }
