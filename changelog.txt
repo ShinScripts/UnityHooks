@@ -3,6 +3,9 @@ Date format: DD/MM/YY
 10/12/24:
 -Added colors to embeds
 -Added timestamps to embeds
+-Added images to embeds as well as embed footers
+-Added thumbnails to embeds
+-Added author and author links to the embeds
 
 9/12/24:
 -Created logic to serialize json data from an object in C#

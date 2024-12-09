@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Microsoft.Unity.VisualStudio.Editor;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -47,7 +48,7 @@ public class WebHook : MonoBehaviour
         Fuchsia = 15418782,
     }
 
-    class Hook
+    private class Hook
     {
         public Hook SetContent(string content)
         {
@@ -106,20 +107,13 @@ public class WebHook : MonoBehaviour
         public List<Embed> embeds = new();
     }
 
-    class Embed
-    {
-        public class Footer
-        {
-            public string text;
-        }
 
-#nullable enable
-        public string? title = null;
-        public string? description = null;
-        public Colors? color = null;
-        public Uri? url = null;
-        public Footer? footer = null;
-        public string? timestamp
+    private class Embed
+    {
+        public string title = null;
+        public string description = null;
+        public Uri url = null;
+        public string timestamp
         {
             get => _timestamp;
             set
@@ -134,22 +128,68 @@ public class WebHook : MonoBehaviour
                 }
             }
         }
-        private string? _timestamp = null;
+        public Colors color = Colors.Default;
+        public Footer footer = null;
+        public Image image = null;
+        public Thumbnail thumbnail = null;
+        public Author author = null;
+
+        // Helpers
+        public class Author
+        {
+            public string name = null;
+            public Uri url = null;
+            public Uri icon_url = null;
+        }
+
+        public class Image
+        {
+            public Uri url;
+        }
+        public class Thumbnail : Image { }
+        public class Video : Image { }
+
+        public class Footer
+        {
+            public string text;
+            public Uri icon_url = null;
+        }
+        private string _timestamp = null;
     }
 
     void Start()
     {
+        Uri URL = new("https://cdn.discordapp.com/attachments/856270086816923648/908435073542545428/vectorstock_20239429.png?ex=6757ead7&is=67569957&hm=8b4cbe0f6403d41435d08df5ef0b65935a0862c5821bcc42eda7345a409a4b08&");
+
         Hook hook = new();
+        hook.content = "This is the content field";
+        hook.username = "Username for the hook";
         hook.AddEmbed(new()
         {
-            title = "title",
+            title = "Title (with url)",
+            thumbnail = new()
+            {
+                url = URL
+            },
             description = "description",
-            url = new Uri("https://www.github.com"),
+            url = new("https://www.github.com"),
             color = Colors.Orange,
             footer = new()
             {
-                text = "footer"
-            }
+                text = "footer",
+                icon_url = URL
+            },
+            image = new()
+            {
+                url = URL
+            },
+            author = new()
+            {
+                name = "author name",
+                url = URL,
+                icon_url = URL
+            },
+            timestamp = DateTime.UtcNow.ToString()
         });
 
         Debug.Log(hook.ToJson());
