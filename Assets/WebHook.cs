@@ -1,13 +1,51 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
+
+
 public class WebHook : MonoBehaviour
 {
     string webhook_url = "https://discord.com/api/webhooks/1315373704586203227/T-bYVN8wJksmWDGNnUGtmViW7-_QOzSmuFjTWAWV3UzA4SYrjhnS_rwsjbzvS0m1wnSm";
+
+    private enum Colors : int
+    {
+        Default = 0,
+        Aqua = 1752220,
+        DarkAqua = 1146986,
+        Green = 5763719,
+        DarkGreen = 2067276,
+        Blue = 3447003,
+        DarkBlue = 2123412,
+        Purple = 10181046,
+        DarkPurple = 7419530,
+        LuminousVividPink = 15277667,
+        DarkVividPink = 11342935,
+        Gold = 15844367,
+        DarkGold = 12745742,
+        Orange = 15105570,
+        DarkOrange = 11027200,
+        Red = 15548997,
+        DarkRed = 10038562,
+        Grey = 9807270,
+        DarkGrey = 9936031,
+        DarkerGrey = 8359053,
+        LightGrey = 12370112,
+        Navy = 3426654,
+        DarkNavy = 2899536,
+        Yellow = 16776960,
+        White = 16777215,
+        Greyple = 10070709,
+        Black = 2303786,
+        DarkButNotBlack = 2895667,
+        NotQuiteBlack = 2303786,
+        Blurple = 5793266,
+        Fuchsia = 15418782,
+    }
 
     class Hook
     {
@@ -70,26 +108,49 @@ public class WebHook : MonoBehaviour
 
     class Embed
     {
-        // public class Footer
-        // {
-        //     public string text;
-        // }
+        public class Footer
+        {
+            public string text;
+        }
 
 #nullable enable
         public string? title = null;
         public string? description = null;
-        // public string url;
-        // public Footer footer;
+        public Colors? color = null;
+        public Uri? url = null;
+        public Footer? footer = null;
+        public string? timestamp
+        {
+            get => _timestamp;
+            set
+            {
+                if (DateTime.TryParse(value, out DateTime dateTime))
+                {
+                    _timestamp = dateTime.ToString("o", CultureInfo.InvariantCulture); // ISO 8601 format
+                }
+                else
+                {
+                    throw new Exception("The input string is not a valid DateTime format");
+                }
+            }
+        }
+        private string? _timestamp = null;
     }
 
     void Start()
     {
         Hook hook = new();
-        // hook.AddEmbed(new()
-        // {
-        //     title = "title",
-        //     description = "description"
-        // });
+        hook.AddEmbed(new()
+        {
+            title = "title",
+            description = "description",
+            url = new Uri("https://www.github.com"),
+            color = Colors.Orange,
+            footer = new()
+            {
+                text = "footer"
+            }
+        });
 
         Debug.Log(hook.ToJson());
         hook.Send(webhook_url);

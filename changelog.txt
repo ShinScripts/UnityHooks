@@ -1,6 +1,10 @@
 Date format: DD/MM/YY
 
-9/12/24
+10/12/24:
+-Added colors to embeds
+-Added timestamps to embeds
+
+9/12/24:
 -Created logic to serialize json data from an object in C#
 -Added functionality to POST said data to Discord
 -Started working on the embed fields
