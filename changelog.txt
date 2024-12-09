@@ -6,6 +6,7 @@ Date format: DD/MM/YY
 -Added images to embeds as well as embed footers
 -Added thumbnails to embeds
 -Added author and author links to the embeds
+-Added functions to set variables in embeds
 
 9/12/24:
 -Created logic to serialize json data from an object in C#

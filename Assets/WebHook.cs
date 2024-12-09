@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using Microsoft.Unity.VisualStudio.Editor;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -75,10 +74,7 @@ public class WebHook : MonoBehaviour
                 throw new Exception("Content and embeds cannot be null, you need to provide at least one of them");
             }
 
-            if (embeds.Count > 10)
-            {
-                throw new Exception("You can only have up to 10 embeds per discords limits");
-            }
+            CheckEmbedLimits(embeds);
 
             UnityWebRequest request = new(webhook_url, "POST");
 
@@ -94,11 +90,55 @@ public class WebHook : MonoBehaviour
             print($"Result: {request.result}, Response code: {request.responseCode}");
         }
 
+        private void CheckEmbedLimits(List<Embed> embeds)
+        {
+            if (embeds.Count > 10)
+            {
+                throw new Exception("You can only have up to 10 embeds per discords limits");
+            }
+
+            foreach (var embed in embeds)
+            {
+                if (embed.title?.Length > 256)
+                {
+                    throw new Exception("Embed titles may only be up to 256 characters");
+                }
+                if (embed.description?.Length > 4096)
+                {
+                    throw new Exception("Embed descriptions may only be up to 4096 characters");
+                }
+                if (embed.footer?.text.Length > 2048)
+                {
+                    throw new Exception("Embed footer texts may only be up to 2048 characters");
+                }
+                if (embed.author?.name.Length > 256)
+                {
+                    throw new Exception("Embed author names may only be up to 256 characters");
+                }
+                if (embed.fields.Count > 25)
+                {
+                    throw new Exception("Embeds may only have up to 25 fields");
+                }
+
+                foreach (var field in embed.fields)
+                {
+                    if (field.name.Length > 256)
+                    {
+                        throw new Exception("Embed field names may only be up to 256 characters");
+                    }
+                    if (field.value.Length > 1024)
+                    {
+                        throw new Exception("Embed field values may only be up to 1024 characters");
+                    }
+                }
+            }
+        }
+
         public string ToJson()
         {
-            return JsonConvert.SerializeObject(this, Formatting.None, new JsonSerializerSettings
+            return JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore
+                NullValueHandling = NullValueHandling.Ignore,
             });
         }
 
@@ -110,6 +150,66 @@ public class WebHook : MonoBehaviour
 
     private class Embed
     {
+        public Embed SetTitle(string title)
+        {
+            this.title = title;
+            return this;
+        }
+
+        public Embed SetDescription(string description)
+        {
+            this.description = description;
+            return this;
+        }
+
+        public Embed SetURL(Uri url)
+        {
+            this.url = url;
+            return this;
+        }
+
+        public Embed SetTimestamp(string timestamp)
+        {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public Embed SetColor(Colors color)
+        {
+            this.color = color;
+            return this;
+        }
+
+        public Embed SetFooter(Footer footer)
+        {
+            this.footer = footer;
+            return this;
+        }
+
+        public Embed SetImage(Image image)
+        {
+            this.image = image;
+            return this;
+        }
+
+        public Embed SetThumbnail(Thumbnail thumbnail)
+        {
+            this.thumbnail = thumbnail;
+            return this;
+        }
+
+        public Embed SetAuthor(Author author)
+        {
+            this.author = author;
+            return this;
+        }
+
+        public Embed AddField(Field field)
+        {
+            fields.Add(field);
+            return this;
+        }
+
         public string title = null;
         public string description = null;
         public Uri url = null;
@@ -133,8 +233,16 @@ public class WebHook : MonoBehaviour
         public Image image = null;
         public Thumbnail thumbnail = null;
         public Author author = null;
+        public List<Field> fields = new();
 
         // Helpers
+        public class Field
+        {
+            public string name = null;
+            public string value = null;
+            public bool inline = false;
+        }
+
         public class Author
         {
             public string name = null;
@@ -162,8 +270,19 @@ public class WebHook : MonoBehaviour
         Uri URL = new("https://cdn.discordapp.com/attachments/856270086816923648/908435073542545428/vectorstock_20239429.png?ex=6757ead7&is=67569957&hm=8b4cbe0f6403d41435d08df5ef0b65935a0862c5821bcc42eda7345a409a4b08&");
 
         Hook hook = new();
-        hook.content = "This is the content field";
-        hook.username = "Username for the hook";
+        hook.SetContent("This is the content field");
+        hook.SetUsername("Username for the hook");
+
+        Embed embed = new();
+        embed.SetTitle("Title (with url)");
+        embed.SetColor(Colors.Red);
+        embed.AddField(new()
+        {
+            name = "this is a field title",
+            value = "this is a field value"
+        });
+        hook.AddEmbed(embed);
+
         hook.AddEmbed(new()
         {
             title = "Title (with url)",
@@ -189,7 +308,22 @@ public class WebHook : MonoBehaviour
                 url = URL,
                 icon_url = URL
             },
-            timestamp = DateTime.UtcNow.ToString()
+            timestamp = DateTime.UtcNow.ToString(),
+            fields = new List<Embed.Field>() { new Embed.Field() {
+                name = "field 1",
+                value = "field 1",
+                inline = true
+            },
+            new Embed.Field() {
+                name = "field 2",
+                value = "field 2",
+                inline = true
+            },
+            new Embed.Field() {
+                name = "field 3",
+                value = "field 3",
+                inline = true
+            }}
         });
 
         Debug.Log(hook.ToJson());
