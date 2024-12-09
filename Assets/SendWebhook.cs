@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class SendWebhook : MonoBehaviour
 {
     private async void Awake()
     {
         Uri URL = new("https://cdn.discordapp.com/attachments/856270086816923648/908435073542545428/vectorstock_20239429.png?ex=6757ead7&is=67569957&hm=8b4cbe0f6403d41435d08df5ef0b65935a0862c5821bcc42eda7345a409a4b08&");
-        Uri webhook_url = new("https://discord.com/api/webhooks/1315373704586203227/T-bYVN8wJksmWDGNnUGtmViW7-_QOzSmuFjTWAWV3UzA4SYrjhnS_rwsjbzvS0m1wnSm");
+        Uri webhook_url = new("https://discord.com/api/webhooks/1315815051998920754/fRz9V7Tdo0YNOhRNMbkKraf3rHie4s97DwKO5BXL6Edqj7HzCG8M0lZPVzta1h5dTdl7");
 
         Webhook hook = new(webhook_url);
         hook.SetContent("This is the content field");
@@ -16,7 +15,7 @@ public class SendWebhook : MonoBehaviour
 
         Webhook.Embed embed = new();
         embed.SetTitle("Title (with url)");
-        embed.SetColor(Webhook.Colors.Red);
+        embed.SetColor(Webhook.Colors.Yellow);
         embed.AddField(new()
         {
             name = "this is a field title",
@@ -68,9 +67,9 @@ public class SendWebhook : MonoBehaviour
         });
 
         Debug.Log(hook.ToJson());
-        var (result, responseCode) = await hook.Send();
+        var (result, responseCode, error) = await hook.Send();
 
-        print($"Result: {result}, Response code: {responseCode}");
+        Debug.Log($"Result: {result}, Response code: {responseCode}, Error: {error}");
 
     }
 }

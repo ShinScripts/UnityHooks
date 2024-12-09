@@ -1,6 +1,9 @@
 Date format: DD/MM/YY
 
 10/12/24:
+-Added error text to the return value of send
+
+9/12/24:
 -Added colors to embeds
 -Added timestamps to embeds
 -Added images to embeds as well as embed footers
@@ -8,7 +11,7 @@ Date format: DD/MM/YY
 -Added author and author links to the embeds
 -Added functions to set variables in embeds
 
-9/12/24:
+8/12/24:
 -Created logic to serialize json data from an object in C#
 -Added functionality to POST said data to Discord
 -Started working on the embed fields

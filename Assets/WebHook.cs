@@ -70,7 +70,7 @@ public class Webhook
         return this;
     }
 
-    public async Task<(UnityWebRequest.Result result, long responseCode)> Send()
+    public async Task<(UnityWebRequest.Result result, long responseCode, string error)> Send()
     {
         if (content == null && embeds.Count == 0)
         {
@@ -90,8 +90,7 @@ public class Webhook
 
         await request.SendWebRequest();
 
-
-        return (request.result, request.responseCode);
+        return (request.result, request.responseCode, request.downloadHandler.text);
     }
 
     private void CheckEmbedLimits(List<Embed> embeds)
