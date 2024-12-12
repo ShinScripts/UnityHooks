@@ -16,42 +16,6 @@ public class Webhook
         this.webhook_url = webhook_url;
     }
 
-    public enum Colors : int
-    {
-        Default = 0,
-        Aqua = 1752220,
-        DarkAqua = 1146986,
-        Green = 5763719,
-        DarkGreen = 2067276,
-        Blue = 3447003,
-        DarkBlue = 2123412,
-        Purple = 10181046,
-        DarkPurple = 7419530,
-        LuminousVividPink = 15277667,
-        DarkVividPink = 11342935,
-        Gold = 15844367,
-        DarkGold = 12745742,
-        Orange = 15105570,
-        DarkOrange = 11027200,
-        Red = 15548997,
-        DarkRed = 10038562,
-        Grey = 9807270,
-        DarkGrey = 9936031,
-        DarkerGrey = 8359053,
-        LightGrey = 12370112,
-        Navy = 3426654,
-        DarkNavy = 2899536,
-        Yellow = 16776960,
-        White = 16777215,
-        Greyple = 10070709,
-        Black = 2303786,
-        DarkButNotBlack = 2895667,
-        NotQuiteBlack = 2303786,
-        Blurple = 5793266,
-        Fuchsia = 15418782,
-    }
-
-
     public Webhook SetContent(string content)
     {
         this.content = content;
@@ -148,121 +112,176 @@ public class Webhook
     public string username = null;
     public string content = null;
     public List<Embed> embeds = new();
+}
 
-    public class Embed
+public class Embed
+{
+    public Embed SetTitle(string title)
     {
-        public Embed SetTitle(string title)
-        {
-            this.title = title;
-            return this;
-        }
+        this.title = title;
+        return this;
+    }
 
-        public Embed SetDescription(string description)
-        {
-            this.description = description;
-            return this;
-        }
+    public Embed SetDescription(string description)
+    {
+        this.description = description;
+        return this;
+    }
 
-        public Embed SetURL(Uri url)
-        {
-            this.url = url;
-            return this;
-        }
+    public Embed SetURL(Uri url)
+    {
+        this.url = url;
+        return this;
+    }
 
-        public Embed SetTimestamp(string timestamp)
-        {
-            this.timestamp = timestamp;
-            return this;
-        }
+    public Embed SetTimestamp(string timestamp)
+    {
+        this.timestamp = timestamp;
+        return this;
+    }
 
-        public Embed SetColor(Colors color)
-        {
-            this.color = color;
-            return this;
-        }
+    public Embed SetColor(Colors color)
+    {
+        this.color = color;
+        return this;
+    }
 
-        public Embed SetFooter(Footer footer)
+    public Embed SetFooter(string text, Uri icon_url = null)
+    {
+        footer = new()
         {
-            this.footer = footer;
-            return this;
-        }
+            text = text,
+            icon_url = icon_url
+        };
+        return this;
+    }
 
-        public Embed SetImage(Image image)
+    public Embed SetImage(Uri url)
+    {
+        image = new()
         {
-            this.image = image;
-            return this;
-        }
+            url = url
+        };
+        return this;
+    }
 
-        public Embed SetThumbnail(Thumbnail thumbnail)
+    public Embed SetThumbnail(Uri url)
+    {
+        thumbnail = new()
         {
-            this.thumbnail = thumbnail;
-            return this;
-        }
+            url = url
+        };
+        return this;
+    }
 
-        public Embed SetAuthor(Author author)
+    public Embed SetAuthor(string name, Uri url = null, Uri icon_url = null)
+    {
+        author = new()
         {
-            this.author = author;
-            return this;
-        }
+            name = name,
+            url = url,
+            icon_url = icon_url
+        };
+        return this;
+    }
 
-        public Embed AddField(Field field)
+    public Embed AddField(string name, string value, bool inline = false)
+    {
+        fields.Add(new()
         {
-            fields.Add(field);
-            return this;
-        }
+            name = name,
+            value = value,
+            inline = inline
+        });
+        return this;
+    }
 
-        public string title = null;
-        public string description = null;
-        public Uri url = null;
-        public string timestamp
+    public string title = null;
+    public string description = null;
+    public Uri url = null;
+    public string timestamp
+    {
+        get => _timestamp;
+        set
         {
-            get => _timestamp;
-            set
+            if (DateTime.TryParse(value, out DateTime dateTime))
             {
-                if (DateTime.TryParse(value, out DateTime dateTime))
-                {
-                    _timestamp = dateTime.ToString("o", CultureInfo.InvariantCulture); // ISO 8601 format
-                }
-                else
-                {
-                    throw new Exception("The input string is not a valid DateTime format");
-                }
+                _timestamp = dateTime.ToString("o", CultureInfo.InvariantCulture); // ISO 8601 format
+            }
+            else
+            {
+                throw new Exception("The input string is not a valid DateTime format");
             }
         }
-        public Colors color = Colors.Default;
-        public Footer footer = null;
-        public Image image = null;
-        public Thumbnail thumbnail = null;
-        public Author author = null;
-        public List<Field> fields = new();
-
-        // Helpers
-        public class Field
-        {
-            public string name = null;
-            public string value = null;
-            public bool inline = false;
-        }
-
-        public class Author
-        {
-            public string name = null;
-            public Uri url = null;
-            public Uri icon_url = null;
-        }
-
-        public class Image
-        {
-            public Uri url;
-        }
-        public class Thumbnail : Image { }
-        public class Video : Image { }
-
-        public class Footer
-        {
-            public string text;
-            public Uri icon_url = null;
-        }
-        private string _timestamp = null;
     }
+    public Colors color = Colors.Default;
+    public Footer footer = null;
+    public Image image = null;
+    public Thumbnail thumbnail = null;
+    public Author author = null;
+    public List<Field> fields = new();
+
+    // Helpers
+    public class Field
+    {
+        public string name = null;
+        public string value = null;
+        public bool inline = false;
+    }
+
+    public class Author
+    {
+        public string name = null;
+        public Uri url = null;
+        public Uri icon_url = null;
+    }
+
+    public class Image
+    {
+        public Uri url;
+    }
+    public class Thumbnail : Image { }
+    public class Video : Image { }
+
+    public class Footer
+    {
+        public string text;
+        public Uri icon_url = null;
+    }
+    private string _timestamp = null;
+}
+
+public enum Colors : int
+{
+    Default = 0,
+    Aqua = 1752220,
+    DarkAqua = 1146986,
+    Green = 5763719,
+    DarkGreen = 2067276,
+    Blue = 3447003,
+    DarkBlue = 2123412,
+    Purple = 10181046,
+    DarkPurple = 7419530,
+    LuminousVividPink = 15277667,
+    DarkVividPink = 11342935,
+    Gold = 15844367,
+    DarkGold = 12745742,
+    Orange = 15105570,
+    DarkOrange = 11027200,
+    Red = 15548997,
+    DarkRed = 10038562,
+    Grey = 9807270,
+    DarkGrey = 9936031,
+    DarkerGrey = 8359053,
+    LightGrey = 12370112,
+    Navy = 3426654,
+    DarkNavy = 2899536,
+    Yellow = 16776960,
+    White = 16777215,
+    Greyple = 10070709,
+    Black = 2303786,
+    DarkButNotBlack = 2895667,
+    NotQuiteBlack = 2303786,
+    Blurple = 5793266,
+    Fuchsia = 15418782,
 }

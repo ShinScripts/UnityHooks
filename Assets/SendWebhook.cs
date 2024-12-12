@@ -13,18 +13,6 @@ public class SendWebhook : MonoBehaviour
         Uri webhook_url = new("https://discord.com/api/webhooks/1315815051998920754/fRz9V7Tdo0YNOhRNMbkKraf3rHie4s97DwKO5BXL6Edqj7HzCG8M0lZPVzta1h5dTdl7");
 
         Webhook hook = new(webhook_url);
-        hook.SetContent("This is the content field");
-        hook.SetUsername("Username for the hook");
-
-        Webhook.Embed embed = new();
-        embed.SetTitle("Title (with url)");
-        embed.SetColor(Webhook.Colors.Yellow);
-        embed.AddField(new()
-        {
-            name = "this is a field title",
-            value = "this is a field value"
-        });
-        hook.AddEmbed(embed);
 
         hook.AddEmbed(new()
         {
@@ -35,7 +23,7 @@ public class SendWebhook : MonoBehaviour
             },
             description = "description",
             url = new("https://www.github.com"),
-            color = Webhook.Colors.Orange,
+            color = Colors.Orange,
             footer = new()
             {
                 text = "footer",
@@ -52,29 +40,28 @@ public class SendWebhook : MonoBehaviour
                 icon_url = URL
             },
             timestamp = DateTime.UtcNow.ToString(),
-            fields = new List<Webhook.Embed.Field>() { new Webhook.Embed.Field() {
+            fields = new List<Embed.Field>() { new Embed.Field() {
                 name = "field 1",
                 value = "field 1",
                 inline = true
             },
-            new Webhook.Embed.Field() {
+            new Embed.Field() {
                 name = "field 2",
                 value = "field 2",
                 inline = true
             },
-            new Webhook.Embed.Field() {
+            new Embed.Field() {
                 name = "field 3",
                 value = "field 3",
                 inline = true
             }}
         });
 
-        Debug.Log(hook.ToJson());
         var (result, responseCode, error) = await hook.Send();
-
         string log_message = $"Result: {result}, Response code: {responseCode}, Error: {error}";
-
         text_field.text = log_message;
+
+        Debug.Log(hook.ToJson());
         Debug.Log(log_message);
     }
 }
