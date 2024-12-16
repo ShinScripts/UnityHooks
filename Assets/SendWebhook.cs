@@ -9,8 +9,8 @@ public class SendWebhook : MonoBehaviour
 
     public async void Send()
     {
-        Uri URL = new("https://cdn.discordapp.com/attachments/856270086816923648/908435073542545428/vectorstock_20239429.png?ex=6757ead7&is=67569957&hm=8b4cbe0f6403d41435d08df5ef0b65935a0862c5821bcc42eda7345a409a4b08&");
-        Uri webhook_url = new("https://discord.com/api/webhooks/1315815051998920754/fRz9V7Tdo0YNOhRNMbkKraf3rHie4s97DwKO5BXL6Edqj7HzCG8M0lZPVzta1h5dTdl7");
+        Uri URL = new("add your image URL here");
+        Uri webhook_url = new("add you discord webhook token here");
 
         Webhook hook = new(webhook_url);
 
